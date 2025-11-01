@@ -3,10 +3,24 @@ import React from 'react';
 function FlightDataPanel({ telemetry }) {
   const mode = telemetry.mode || 'N/A';
   const armed = telemetry.armed || false;
-  const alt = typeof telemetry.alt === 'number' ? telemetry.alt : 0;
-  const groundspeed = typeof telemetry.groundspeed === 'number' ? telemetry.groundspeed : 0;
-  const battery = typeof telemetry.battery_remaining === 'number' ? telemetry.battery_remaining : 0;
-  const satellites = typeof telemetry.satellites === 'number' ? telemetry.satellites : 0;
+  const alt = parseFloat(telemetry.alt) || 0;
+  const groundspeed = parseFloat(telemetry.groundspeed) || 0;
+  const battery = parseFloat(telemetry.battery_remaining) || 0;
+  const satellites = parseInt(telemetry.satellites) || 0;
+  const gps_fix = parseInt(telemetry.gps_fix) || 0;
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Flight Data Updated:', {
+      mode,
+      armed,
+      alt,
+      groundspeed,
+      battery,
+      satellites,
+      gps_fix
+    });
+  }, [telemetry]);
 
   return (
     <div className="panel">
@@ -34,7 +48,15 @@ function FlightDataPanel({ telemetry }) {
         </div>
         <div className="data-item">
           <label>Satellites</label>
-          <div className="value">{satellites}</div>
+          <div className="value" style={{ color: satellites < 10 ? '#ff6666' : '#66ff66' }}>
+            {satellites}
+          </div>
+        </div>
+        <div className="data-item">
+          <label>GPS Fix</label>
+          <div className="value" style={{ color: gps_fix >= 3 ? '#66ff66' : '#ff6666' }}>
+            {gps_fix >= 3 ? '🟢 Fixed' : '🔴 No Fix'}
+          </div>
         </div>
       </div>
     </div>
